@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>6767 Studio Downloader - YouTube Tools</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <meta name="theme-color" content="#07111f" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="description" content="6767 Studio Downloader untuk kebutuhan konten pribadi: video, musik, thumbnail, history, dan promosi." />
+  <style>
+    :root {
+      --bg: #060b14;
+      --panel: #101c2a;
+      --panel-2: #142437;
+      --panel-3: #0b1320;
+      --line: rgba(148, 163, 184, .22);
+      --line-strong: rgba(80, 184, 255, .34);
+      --text: #f7fbff;
+      --muted: #97a6b7;
+      --soft: #c7d2df;
+      --blue: #3aa7ff;
+      --blue-2: #2664ff;
+      --cyan: #43d8ff;
+      --pink: #ff386b;
+      --green: #28d17c;
+      --yellow: #f7c948;
+      --shadow: 0 24px 60px rgba(0, 0, 0, .35);
+      --radius-xl: 28px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --font-main: 'Share Tech Mono', ui-monospace, monospace;
+      --font-tech: 'Share Tech Mono', ui-monospace, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html { min-height: 100%; overflow-x: hidden; scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: var(--text);
+      font-family: var(--font-main);
+      background:
+        radial-gradient(circle at top left, rgba(58, 167, 255, .26), transparent 32rem),
+        radial-gradient(circle at top right, rgba(255, 56, 107, .16), transparent 30rem),
+        linear-gradient(180deg, #091321 0%, #060b14 50%, #030711 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+      background-size: 34px 34px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,.8), transparent 75%);
+      z-index: -1;
+    }
+
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; text-decoration: none; }
+    .hidden { display: none !important; }
+    .mono { font-family: var(--font-tech); letter-spacing: .08em; }
+    .muted { color: var(--muted); }
+
+    .app-shell {
+      width: min(1120px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 24px 0 42px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      padding: 14px;
+      margin-bottom: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      background: linear-gradient(135deg, rgba(20, 36, 55, .94), rgba(8, 16, 28, .94));
+      box-shadow: var(--shadow);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand-mark, .tool-icon, .stat-icon, .media-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      border-radius: 18px;
+      color: var(--cyan);
+      background: linear-gradient(145deg, rgba(67, 216, 255, .18), rgba(38, 100, 255, .14));
+      border: 1px solid rgba(67, 216, 255, .24);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+    }
+
+    .brand-mark {
+      width: 54px;
+      height: 54px;
+    }
+
+    .brand-mark svg { width: 28px; height: 28px; }
+    .brand-title { margin: 0; font-size: clamp(1.35rem, 5vw, 2.1rem); line-height: 1; letter-spacing: .16em; font-family: var(--font-tech); }
+    .brand-sub { margin: 4px 0 0; color: var(--muted); font-size: .82rem; font-family: var(--font-tech); letter-spacing: .12em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .top-badges {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.045);
+      color: var(--soft);
+      font-weight: 800;
+      font-size: .78rem;
+      white-space: nowrap;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(280px, .9fr);
+      gap: 18px;
+      align-items: stretch;
+      margin-bottom: 18px;
+    }
+
+    .hero-card, .panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      background: linear-gradient(160deg, rgba(20, 36, 55, .96), rgba(9, 17, 30, .96));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero-card {
+      padding: clamp(22px, 4vw, 36px);
+      position: relative;
+      min-height: 330px;
+    }
+
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      right: -80px;
+      bottom: -110px;
+      width: 260px;
+      height: 260px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(67,216,255,.18), transparent 65%);
+      pointer-events: none;
+    }
+
+    .hero-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--cyan);
+      font-weight: 900;
+      font-size: .82rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      font-family: var(--font-tech);
+    }
+
+    .hero-title {
+      margin: 16px 0 12px;
+      font-size: clamp(2.25rem, 9vw, 5.2rem);
+      line-height: .92;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      font-family: var(--font-tech);
+    }
+
+    .hero-title span { color: var(--cyan); }
+    .hero-desc {
+      max-width: 720px;
+      color: var(--soft);
+      font-size: 1rem;
+      line-height: 1.75;
+      margin: 0 0 22px;
+      font-weight: 650;
+    }
+
+    .hero-actions, .quick-grid, .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn {
+      min-height: 48px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 0 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      color: var(--text);
+      background: rgba(255,255,255,.045);
+      font-weight: 900;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease, opacity .18s ease;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+    }
+
+    .btn svg { width: 20px; height: 20px; stroke-width: 2.4; }
+    .btn:hover:not(:disabled) { transform: translateY(-2px); border-color: var(--line-strong); background: rgba(58, 167, 255, .12); }
+    .btn:disabled { cursor: not-allowed; opacity: .62; transform: none; }
+    .btn-primary { border-color: rgba(58,167,255,.55); background: linear-gradient(135deg, #47b8ff, #2664ff); box-shadow: 0 16px 35px rgba(38,100,255,.22); }
+    .btn-green { border-color: rgba(40,209,124,.38); background: rgba(40,209,124,.12); color: #a8ffd3; }
+    .btn-danger { border-color: rgba(255,56,107,.35); background: rgba(255,56,107,.12); color: #ffd0dc; }
+    .btn-ghost { background: transparent; }
+    .btn-full { width: 100%; }
+
+    .mini-dashboard {
+      padding: 18px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .mini-title {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-tech);
+      letter-spacing: .08em;
+      font-size: 1.15rem;
+    }
+
+    .tool-icon, .stat-icon { width: 42px; height: 42px; border-radius: 14px; }
+    .tool-icon svg, .stat-icon svg { width: 22px; height: 22px; }
+
+    .mini-stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .mini-stat {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 16px;
+      background: rgba(255,255,255,.035);
+    }
+
+    .mini-stat strong {
+      display: block;
+      font-family: var(--font-tech);
+      letter-spacing: .08em;
+      font-size: 1.6rem;
+      margin-bottom: 3px;
+    }
+
+    .mini-stat span {
+      font-size: .74rem;
+      text-transform: uppercase;
+      color: var(--muted);
+      letter-spacing: .12em;
+      font-weight: 900;
+    }
+
+    .tips-card {
+      border: 1px dashed rgba(67,216,255,.25);
+      background: rgba(67,216,255,.055);
+      border-radius: 20px;
+      padding: 16px;
+      color: var(--soft);
+      line-height: 1.65;
+      font-weight: 700;
+      font-size: .9rem;
+    }
+
+    .tabs {
+      --tab-pill-left: 8px;
+      --tab-pill-width: calc((100% - 40px) / 4);
+      position: sticky;
+      top: 10px;
+      z-index: 20;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      padding: 8px;
+      margin-bottom: 18px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: rgba(10, 19, 32, .94);
+      box-shadow: 0 18px 36px rgba(0,0,0,.28);
+      overflow: hidden;
+      touch-action: pan-y;
+      user-select: none;
+    }
+
+    .tab-pill {
+      position: absolute;
+      top: 8px;
+      left: 0;
+      width: var(--tab-pill-width);
+      height: calc(100% - 16px);
+      border-radius: 18px;
+      background: linear-gradient(135deg, #47b8ff, #2664ff);
+      box-shadow: 0 14px 32px rgba(38,100,255,.25), inset 0 1px 0 rgba(255,255,255,.22);
+      transform: translate3d(var(--tab-pill-left), 0, 0);
+      transition:
+        transform .46s cubic-bezier(.22, 1, .36, 1),
+        width .46s cubic-bezier(.22, 1, .36, 1),
+        filter .22s ease,
+        box-shadow .22s ease;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .tabs.dragging .tab-pill {
+      transition: none;
+      filter: brightness(1.08);
+      box-shadow: 0 18px 40px rgba(38,100,255,.34), inset 0 1px 0 rgba(255,255,255,.28);
+    }
+
+    .tabs.no-pill-transition .tab-pill {
+      transition: none !important;
+    }
+
+    .tab-btn {
+      border: 0;
+      min-height: 52px;
+      min-width: 0;
+      padding: 0 8px;
+      border-radius: 18px;
+      color: var(--muted);
+      background: transparent;
+      font-weight: 900;
+      letter-spacing: .08em;
+      font-family: var(--font-tech);
+      text-transform: uppercase;
+      transition: color .2s ease, transform .18s ease, text-shadow .18s ease;
+      position: relative;
+      z-index: 2;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .tab-btn.active,
+    .tab-btn.preview {
+      color: #fff;
+      text-shadow: 0 2px 14px rgba(255,255,255,.24);
+    }
+
+    .tab-btn:active {
+      transform: scale(.96);
+    }
+
+    .tab-panel {
+      transform-origin: top center;
+    }
+
+    .tab-panel.tab-entering {
+      animation: tabPanelIn .38s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    .tab-panel.tab-leaving {
+      animation: tabPanelOut .20s ease both;
+    }
+
+    .tab-panel.tab-entering :is(.panel, .result-card, .history-card, .promo-card, .media-card, .stat-card, .input-box, .btn, .caption-box, .profile-head, .slide-hint) {
+      animation: tabElementIn .44s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    .tab-panel.tab-leaving :is(.panel, .result-card, .history-card, .promo-card, .media-card, .stat-card, .input-box, .btn, .caption-box, .profile-head, .slide-hint) {
+      animation: tabElementOut .18s ease both;
+    }
+
+    .tab-panel.tab-entering :is(.panel, .result-card, .history-card, .promo-card, .media-card, .stat-card, .input-box, .btn, .caption-box, .profile-head, .slide-hint):nth-child(2) { animation-delay: .035s; }
+    .tab-panel.tab-entering :is(.panel, .result-card, .history-card, .promo-card, .media-card, .stat-card, .input-box, .btn, .caption-box, .profile-head, .slide-hint):nth-child(3) { animation-delay: .07s; }
+    .tab-panel.tab-entering :is(.panel, .result-card, .history-card, .promo-card, .media-card, .stat-card, .input-box, .btn, .caption-box, .profile-head, .slide-hint):nth-child(4) { animation-delay: .105s; }
+
+    @keyframes tabPanelIn {
+      from { opacity: 0; transform: translateY(18px) scale(.985); filter: blur(8px); }
+      to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+    }
+
+    @keyframes tabPanelOut {
+      from { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+      to { opacity: 0; transform: translateY(-10px) scale(.985); filter: blur(5px); }
+    }
+
+    @keyframes tabElementIn {
+      from { opacity: 0; transform: translateY(16px) scale(.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes tabElementOut {
+      from { opacity: 1; transform: translateY(0) scale(1); }
+      to { opacity: 0; transform: translateY(-8px) scale(.985); }
+    }
+
+    .panel {
+      padding: clamp(18px, 4vw, 30px);
+      margin-bottom: 18px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0;
+      font-size: clamp(1.35rem, 4vw, 2rem);
+      font-family: var(--font-tech);
+      letter-spacing: .08em;
+    }
+
+    .section-desc {
+      margin: 6px 0 0;
+      color: var(--muted);
+      line-height: 1.65;
+      font-weight: 700;
+    }
+
+    .input-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: var(--panel-3);
+      min-height: 62px;
+      padding: 0 14px;
+      transition: .2s ease;
+    }
+
+    .input-box:focus-within {
+      border-color: var(--line-strong);
+      box-shadow: 0 0 0 4px rgba(58, 167, 255, .12);
+    }
+
+    .input-box svg {
+      width: 24px;
+      height: 24px;
+      flex: 0 0 auto;
+      color: var(--muted);
+    }
+
+    .input-box input {
+      width: 100%;
+      height: 58px;
+      min-width: 0;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--text);
+      font-size: 1rem;
+      font-weight: 800;
+    }
+
+    .input-box input::placeholder { color: rgba(151, 166, 183, .82); }
+
+    .inline-tools {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin: 12px 0;
+    }
+
+    .music-tools .wide-tool {
+      grid-column: 1 / -1;
+      min-height: 58px;
+    }
+
+    .result-card, .media-card, .history-card, .stat-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: rgba(255,255,255,.035);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.045);
+    }
+
+    .result-card { padding: 18px; }
+
+    .creator-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 20px;
+      object-fit: cover;
+      border: 1px solid var(--line);
+      background: var(--panel-3);
+    }
+
+    .creator-row h3 { margin: 0; font-size: 1.2rem; }
+    .creator-row p { margin: 4px 0 0; color: var(--cyan); font-weight: 900; }
+
+    .caption-box {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 16px;
+      background: rgba(0,0,0,.18);
+      line-height: 1.7;
+      color: var(--soft);
+      font-weight: 700;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    .caption-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .caption-label {
+      color: var(--muted);
+      font-family: var(--font-tech);
+      letter-spacing: .08em;
+      font-weight: 900;
+      font-size: .78rem;
+      text-transform: uppercase;
+    }
+
+    .caption-copy-small {
+      width: 38px;
+      height: 38px;
+      min-width: 38px;
+      min-height: 38px;
+      padding: 0;
+      border-radius: 14px;
+    }
+
+    .caption-copy-small svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .caption-content {
+      line-height: 1.65;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .caption-content.is-collapsed {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 4;
+      overflow: hidden;
+    }
+
+    .caption-toggle {
+      margin-top: 12px;
+      border: 0;
+      background: transparent;
+      color: var(--cyan);
+      font-weight: 900;
+      padding: 0;
+      font-size: .88rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .caption-toggle svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .stat-card {
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .stat-card .stat-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 16px;
+      flex: 0 0 46px;
+    }
+
+    .stat-card .stat-icon svg {
+      width: 22px;
+      height: 22px;
+      display: block;
+      stroke-width: 2.15;
+    }
+
+    .stat-card .stat-meta {
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+
+    .stat-card .stat-value {
+      display: block;
+      font-size: clamp(.95rem, 3.2vw, 1.08rem);
+      line-height: 1.18;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+
+    .stat-card .stat-label {
+      display: block;
+      color: var(--muted);
+      font-size: .66rem;
+      text-transform: uppercase;
+      letter-spacing: .105em;
+      font-weight: 900;
+      margin-top: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .stat-card.stat-wide {
+      grid-column: span 2;
+      align-items: flex-start;
+    }
+
+    .stat-card.stat-wide .stat-value {
+      white-space: normal;
+      overflow: visible;
+      text-overflow: unset;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      font-size: clamp(.86rem, 2.9vw, 1.02rem);
+    }
+
+    .profile-extra-note {
+      margin-top: 12px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      border: 1px dashed rgba(67,216,255,.22);
+      color: var(--muted);
+      line-height: 1.55;
+      font-weight: 750;
+      background: rgba(67,216,255,.045);
+    }
+
+    .slide-hint {
+      margin-top: 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 13px 14px;
+      border-radius: 18px;
+      border: 1px dashed rgba(67,216,255,.28);
+      background: rgba(67,216,255,.06);
+      color: var(--soft);
+      font-weight: 800;
+      line-height: 1.55;
+    }
+
+    .slide-hint svg {
+      width: 21px;
+      height: 21px;
+      color: var(--cyan);
+      flex: 0 0 21px;
+      margin-top: 2px;
+    }
+
+    .media-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .media-card { padding: 10px; overflow: hidden; }
+    .media-thumb {
+      width: 100%;
+      aspect-ratio: 9/16;
+      object-fit: cover;
+      display: block;
+      border-radius: 16px;
+      background: var(--panel-3);
+      border: 1px solid rgba(255,255,255,.08);
+      cursor: zoom-in;
+    }
+
+    .video-wrap {
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,.42);
+      border-radius: 22px;
+      padding: 10px;
+      margin-top: 16px;
+    }
+
+    video {
+      width: 100%;
+      max-height: 78vh;
+      border-radius: 16px;
+      display: block;
+      background: #000;
+    }
+
+    .action-stack { display: grid; gap: 10px; margin-top: 12px; }
+
+    .profile-head {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .profile-avatar {
+      width: 86px;
+      height: 86px;
+      border-radius: 28px;
+      object-fit: cover;
+      border: 1px solid var(--line-strong);
+      background: var(--panel-3);
+    }
+
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 0 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.045);
+      color: var(--soft);
+      font-size: .74rem;
+      font-weight: 900;
+    }
+
+    .history-list { display: grid; gap: 10px; }
+    .history-card {
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .history-card h4 { margin: 0 0 4px; font-size: 1rem; }
+    .history-card p { margin: 0; color: var(--muted); font-size: .82rem; font-weight: 800; overflow-wrap: anywhere; }
+    .history-card .button-row { flex: 0 0 auto; }
+    .history-card .btn { text-align: center; min-width: 130px; }
+    .history-text {
+      color: var(--text) !important;
+      font-size: .98rem !important;
+      line-height: 1.55;
+      margin: 8px 0 !important;
+    }
+    .history-text.is-collapsed {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 4;
+      overflow: hidden;
+    }
+    .history-toggle {
+      border: 0;
+      background: transparent;
+      color: var(--cyan);
+      font-weight: 900;
+      padding: 6px 0 0;
+      display: inline-flex;
+      width: fit-content;
+    }
+
+
+    .promo-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .promo-card {
+      position: relative;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 14px;
+      min-height: 92px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: linear-gradient(145deg, rgba(255,255,255,.055), rgba(255,255,255,.025));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+      overflow: hidden;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+    }
+
+    .promo-card::after {
+      content: "";
+      position: absolute;
+      inset: auto -60px -70px auto;
+      width: 160px;
+      height: 160px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(67,216,255,.16), transparent 68%);
+      pointer-events: none;
+    }
+
+    .promo-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--line-strong);
+      background: linear-gradient(145deg, rgba(58,167,255,.12), rgba(255,255,255,.035));
+    }
+
+    .promo-card.featured {
+      grid-column: span 2;
+      min-height: 112px;
+      border-color: rgba(40,209,124,.34);
+      background: linear-gradient(135deg, rgba(40,209,124,.15), rgba(58,167,255,.08), rgba(255,255,255,.025));
+    }
+
+    .promo-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--cyan);
+      background: linear-gradient(145deg, rgba(67,216,255,.18), rgba(38,100,255,.12));
+      border: 1px solid rgba(67,216,255,.24);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+      flex: 0 0 auto;
+    }
+
+    .promo-card.whatsapp .promo-icon { color: #7dffb6; border-color: rgba(40,209,124,.30); background: rgba(40,209,124,.12); }
+    .promo-card.tiktok .promo-icon { color: #fff; }
+    .promo-card.store .promo-icon { color: #ffe071; border-color: rgba(247,201,72,.30); background: rgba(247,201,72,.10); }
+    .promo-card.mod .promo-icon { color: #ff9fd1; border-color: rgba(255,56,107,.30); background: rgba(255,56,107,.10); }
+    .promo-card.website .promo-icon { color: #76e7ff; border-color: rgba(67,216,255,.36); background: rgba(67,216,255,.12); }
+
+    .promo-icon svg { width: 27px; height: 27px; stroke-width: 2.25; }
+
+    .promo-title {
+      display: block;
+      font-size: clamp(1rem, 3.5vw, 1.22rem);
+      color: var(--text);
+      font-weight: 900;
+      line-height: 1.15;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      overflow-wrap: anywhere;
+    }
+
+    .promo-desc {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: .83rem;
+      font-weight: 900;
+      line-height: 1.45;
+    }
+
+    .promo-open {
+      width: 38px;
+      height: 38px;
+      border-radius: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--soft);
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--line);
+      z-index: 1;
+    }
+
+    .promo-open svg { width: 19px; height: 19px; stroke-width: 2.45; }
+
+    .promo-note {
+      margin-top: 16px;
+      padding: 15px 16px;
+      border-radius: 20px;
+      border: 1px dashed rgba(67,216,255,.25);
+      background: rgba(67,216,255,.055);
+      color: var(--soft);
+      font-weight: 850;
+      line-height: 1.65;
+    }
+
+    .empty-state {
+      border: 1px dashed var(--line);
+      border-radius: 22px;
+      padding: 24px;
+      text-align: center;
+      color: var(--muted);
+      font-weight: 800;
+      line-height: 1.65;
+      background: rgba(255,255,255,.025);
+    }
+
+    .loader {
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      border: 3px solid rgba(255,255,255,.25);
+      border-top-color: #fff;
+      animation: spin .8s linear infinite;
+      display: inline-block;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #toast-container {
+      position: fixed;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(360px, calc(100% - 26px));
+      z-index: 1000;
+      pointer-events: none;
+    }
+
+    .toast {
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 11px 14px;
+      min-height: 44px;
+      border-radius: 999px;
+      color: #fff;
+      font-weight: 900;
+      font-size: .86rem;
+      line-height: 1.25;
+      text-align: center;
+      border: 1px solid var(--line);
+      background: rgba(12, 22, 38, .98);
+      box-shadow: 0 16px 38px rgba(0,0,0,.32);
+      transform: translateY(-140%);
+      opacity: 0;
+      transition: .25s ease;
+      overflow: hidden;
+    }
+
+    .toast svg {
+      width: 18px !important;
+      height: 18px !important;
+      flex: 0 0 18px;
+      display: block;
+      stroke-width: 2.4;
+    }
+
+    .toast span {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.error { border-left: 4px solid var(--pink); }
+    .toast.success { border-left: 4px solid var(--green); }
+
+    .gallery-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 900;
+      background: rgba(0, 0, 0, .88);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .gallery-overlay.active { display: flex; }
+
+    .gallery-stage {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: min(94vw, 720px);
+      max-height: 88vh;
+    }
+
+    .gallery-img,
+    .gallery-video {
+      max-width: min(92vw, 640px);
+      max-height: 86vh;
+      border-radius: 24px;
+      object-fit: contain;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      background: #050910;
+    }
+
+    .gallery-video {
+      width: min(92vw, 640px);
+      height: auto;
+      display: block;
+    }
+
+    .history-actions {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .history-actions .btn {
+      width: 100%;
+      min-height: 52px;
+    }
+
+    .gallery-close, .gallery-download, .gallery-music, .gallery-nav {
+      border: 1px solid rgba(255,255,255,.24);
+      color: #fff;
+      background: rgba(255,255,255,.12);
+      backdrop-filter: blur(18px) saturate(160%);
+      -webkit-backdrop-filter: blur(18px) saturate(160%);
+      box-shadow: 0 18px 42px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .gallery-close, .gallery-download, .gallery-music {
+      position: fixed;
+      top: 18px;
+      width: 50px;
+      height: 50px;
+      border-radius: 999px;
+      z-index: 3;
+    }
+
+    .gallery-close { right: 18px; }
+    .gallery-download { right: 78px; }
+    .gallery-music { right: 138px; }
+    .gallery-music.is-playing { color: #7ee7ff; border-color: rgba(67,216,255,.42); }
+
+    .gallery-close svg, .gallery-download svg, .gallery-music svg { width: 24px; height: 24px; }
+
+    .gallery-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 48px;
+      height: 72px;
+      border-radius: 999px;
+      z-index: 2;
+    }
+
+    .gallery-nav svg { width: 24px; height: 24px; }
+    .gallery-nav:disabled { opacity: .28; cursor: not-allowed; }
+    .gallery-prev { left: 10px; }
+    .gallery-next { right: 10px; }
+
+    .gallery-counter {
+      position: absolute;
+      left: 50%;
+      bottom: 14px;
+      transform: translateX(-50%);
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.12);
+      backdrop-filter: blur(18px) saturate(160%);
+      -webkit-backdrop-filter: blur(18px) saturate(160%);
+      border: 1px solid rgba(255,255,255,.20);
+      color: #fff;
+      font-family: var(--font-tech);
+      font-weight: 900;
+      letter-spacing: .08em;
+      font-size: .78rem;
+    }
+
+    .footer-note {
+      text-align: center;
+      color: rgba(151,166,183,.75);
+      font-family: var(--font-tech);
+      letter-spacing: .08em;
+      line-height: 1.7;
+      margin: 22px 0 0;
+    }
+
+    @media (max-width: 860px) {
+      .hero { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .media-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 560px) {
+      .app-shell { width: min(100% - 20px, 1120px); padding-top: 12px; }
+      .topbar { align-items: flex-start; }
+      .top-badges { display: none; }
+      .brand-mark { width: 48px; height: 48px; border-radius: 16px; }
+      .hero-card, .panel { border-radius: 24px; }
+      .tabs { top: 8px; grid-template-columns: repeat(4, minmax(0, 1fr)); border-radius: 20px; }
+      .tab-pill { border-radius: 16px; }
+      .tab-btn { min-height: 48px; font-size: .68rem; padding: 0 6px; }
+      .inline-tools { grid-template-columns: 1fr; }
+      .section-head { align-items: flex-start; flex-direction: column; }
+      .hero-actions .btn, .button-row .btn { flex: 1 1 100%; }
+      .mini-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .mini-stat { padding: 14px; }
+      .media-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+      .history-card { align-items: stretch; flex-direction: column; }
+      .history-card .button-row { width: 100%; display: grid; grid-template-columns: 1fr; }
+      .history-card .btn { width: 100%; }
+      .history-actions { grid-template-columns: 1fr; }
+      .promo-grid { grid-template-columns: 1fr; }
+      .promo-card, .promo-card.featured { grid-column: span 1; }
+      .promo-card { min-height: 86px; padding: 14px; gap: 12px; }
+      .promo-icon { width: 48px; height: 48px; border-radius: 16px; }
+      .stat-card.stat-wide { grid-column: span 2; }
+      .profile-head { align-items: flex-start; }
+      .gallery-prev { left: 4px; }
+      .gallery-next { right: 4px; }
+      .gallery-nav { width: 44px; height: 64px; }
+      .toast { font-size: .82rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+    }
+  
+    /* ================================
+   TAP EFFECT HALUS, BUKAN BIRU NORAK
+   ================================ */
+
+/* Matikan highlight biru bawaan Chrome */
+* {
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+/* Semua tombol/tab tetap punya feedback klik */
+button,
+a,
+.tab-btn,
+.tabs button,
+[data-tab],
+[data-switch-tab],
+.btn,
+.action-btn {
+  -webkit-tap-highlight-color: transparent !important;
+  outline: none !important;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Efek saat ditekan: samar hitam, bentuk ikut tombol */
+button:active,
+a:active,
+.tab-btn:active,
+.tabs button:active,
+[data-tab]:active,
+[data-switch-tab]:active,
+.btn:active,
+.action-btn:active {
+  background-color: rgba(0, 0, 0, 0.16) !important;
+  box-shadow: inset 0 0 0 999px rgba(0, 0, 0, 0.10) !important;
+  transform: scale(0.985);
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.08s ease;
+}
+
+/* Jangan rusak pill aktif */
+.tab-btn.active:active,
+.tabs button.active:active,
+[data-tab].active:active {
+  box-shadow: inset 0 0 0 999px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Fokus keyboard jangan muncul outline aneh */
+button:focus,
+a:focus,
+.tab-btn:focus,
+.tabs button:focus,
+[data-tab]:focus,
+[data-switch-tab]:focus {
+  outline: none !important;
+}
+
+/* ==================================================
+   FIX TAP EFFECT: BAYANGAN HANYA SAAT DITEKAN
+   TANPA GLOW BIRU NORAK
+   ================================================== */
+
+/* Hilangkan highlight biru bawaan browser */
+* {
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+/* Target tombol/tab */
+button,
+a,
+.btn,
+.action-btn,
+.tab-btn,
+.tabs button,
+[data-tab],
+[data-switch-tab] {
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+/* Jangan ada efek nyangkut setelah klik */
+button:focus,
+a:focus,
+.btn:focus,
+.action-btn:focus,
+.tab-btn:focus,
+.tabs button:focus,
+[data-tab]:focus,
+[data-switch-tab]:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Kalau ada focus-visible dari browser, matikan juga */
+button:focus-visible,
+a:focus-visible,
+.btn:focus-visible,
+.action-btn:focus-visible,
+.tab-btn:focus-visible,
+.tabs button:focus-visible,
+[data-tab]:focus-visible,
+[data-switch-tab]:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Efek klik cuma muncul saat jari sedang menekan */
+button:active,
+a:active,
+.btn:active,
+.action-btn:active,
+.tab-btn:active,
+.tabs button:active,
+[data-tab]:active,
+[data-switch-tab]:active {
+  box-shadow: inset 0 0 0 999px rgba(0, 0, 0, 0.16) !important;
+  background-color: rgba(0, 0, 0, 0.10) !important;
+  transform: scale(0.985);
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.08s ease;
+}
+
+/* Saat dilepas, langsung bersih */
+button:not(:active),
+a:not(:active),
+.btn:not(:active),
+.action-btn:not(:active),
+.tab-btn:not(:active),
+.tabs button:not(:active),
+[data-tab]:not(:active),
+[data-switch-tab]:not(:active) {
+  box-shadow: none;
+}
+
+    /* ==================================================
+       GALLERY LIVE PHOTO + TOMBOL SLIDE RAPI
+       tombol < > jangan turun-naik kayak lift rusak.
+       ================================================== */
+    .gallery-nav:not(:active) {
+      transform: translateY(-50%) scale(1) !important;
+      box-shadow: 0 18px 42px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.18) !important;
+      background: rgba(255,255,255,.12) !important;
+    }
+
+    .gallery-nav:active {
+      transform: translateY(-50%) scale(.92) !important;
+      background: rgba(0,0,0,.22) !important;
+      box-shadow: inset 0 0 0 999px rgba(0,0,0,.12) !important;
+      transition: transform .09s ease, box-shadow .09s ease, background-color .09s ease !important;
+    }
+
+    .gallery-close:not(:active),
+    .gallery-download:not(:active),
+    .gallery-music:not(:active) {
+      transform: scale(1) !important;
+      box-shadow: 0 18px 42px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.18) !important;
+      background: rgba(255,255,255,.12) !important;
+    }
+
+    .gallery-close:active,
+    .gallery-download:active,
+    .gallery-music:active {
+      transform: scale(.92) !important;
+      background: rgba(0,0,0,.22) !important;
+      box-shadow: inset 0 0 0 999px rgba(0,0,0,.12) !important;
+      transition: transform .09s ease, box-shadow .09s ease, background-color .09s ease !important;
+    }
+
+  
+
+    /* YouTube 6767 update: lightweight result controls, no excessive blur. */
+    body.low-fx::before { opacity: .45; }
+    .yt-layout { display: grid; grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr); gap: 16px; align-items: start; }
+    .yt-help { margin-top: 12px; padding: 13px 14px; border-radius: 18px; border: 1px dashed rgba(67,216,255,.25); background: rgba(67,216,255,.055); color: var(--soft); line-height: 1.55; font-weight: 800; }
+    .filter-row { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 12px; }
+    .mode-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+      width: min(100%, 370px);
+      margin: 16px 0 14px;
+      padding: 5px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,.035);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.045);
+    }
+    .seg-btn, .filter-btn { min-height: 38px; border: 1px solid var(--line); border-radius: 999px; padding: 0 13px; background: rgba(255,255,255,.045); color: var(--soft); font-weight: 900; }
+    .seg-btn { min-height: 48px; border-color: transparent; background: transparent; }
+    .seg-btn.active, .filter-btn.active { color: #04101c; border-color: rgba(67,216,255,.75); background: linear-gradient(135deg, var(--cyan), var(--blue)); }
+    .seg-btn:not(.active):hover { border-color: var(--line); background: rgba(255,255,255,.055); }
+    .yt-thumb { width: 100%; border-radius: 22px; border: 1px solid var(--line); background: var(--panel-3); display: block; aspect-ratio: 16 / 9; object-fit: cover; }
+    .yt-thumb-wrap { position: relative; margin-top: 16px; overflow: hidden; border-radius: 24px; }
+    .yt-thumb-label { position: absolute; left: 12px; top: 12px; display: inline-flex; gap: 8px; align-items: center; padding: 8px 10px; border-radius: 999px; border: 1px solid rgba(255,255,255,.18); background: rgba(0,0,0,.52); font-weight: 900; font-size: .77rem; }
+    .format-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
+    .format-card { min-height: 126px; border: 1px solid var(--line); border-radius: 22px; background: rgba(255,255,255,.045); color: var(--text); padding: 14px; display: grid; gap: 8px; align-content: center; text-align: left; transition: transform .16s ease, border-color .16s ease, background .16s ease, opacity .16s ease; }
+    .format-card:hover { transform: translateY(-2px); border-color: var(--line-strong); background: rgba(58,167,255,.10); }
+    .format-card.active { border-color: rgba(67,216,255,.78); background: rgba(67,216,255,.12); box-shadow: inset 0 0 0 1px rgba(67,216,255,.18); }
+    .format-card.unavailable { opacity: .62; border-style: dashed; cursor: not-allowed; }
+    .format-card.unavailable:hover { transform: none; border-color: rgba(255,255,255,.16); background: rgba(255,255,255,.035); }
+    .format-kicker { width: fit-content; padding: 7px 10px; border-radius: 999px; background: rgba(255,255,255,.07); color: var(--muted); font-size: .73rem; font-weight: 900; text-transform: uppercase; }
+    .format-title { font-size: 1.55rem; font-weight: 950; line-height: 1; }
+    .format-meta { color: var(--muted); font-weight: 900; }
+    .format-status.ready { color: #9fffd0; }
+    .format-status.nope { color: #ffd0dc; }
+    .result-actions { display: grid; grid-template-columns: 1.2fr .8fr; gap: 10px; margin-top: 14px; }
+    .notice-box { margin-top: 12px; padding: 13px 14px; border-radius: 18px; background: rgba(255, 201, 72, .08); border: 1px solid rgba(247, 201, 72, .24); color: #ffeab0; font-weight: 800; line-height: 1.55; }
+    .compact-note { color: var(--muted); font-weight: 800; line-height: 1.55; margin-top: 10px; }
+    .empty-state { padding: 18px; text-align: center; color: var(--muted); font-weight: 900; border: 1px dashed var(--line); border-radius: 20px; margin-top: 12px; }
+    .loader { width: 20px; height: 20px; border-radius: 999px; border: 3px solid rgba(255,255,255,.22); border-top-color: var(--cyan); display: inline-block; animation: spin .72s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .history-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .mini-inline { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+    .mini-inline .btn { min-height: 42px; font-size: .86rem; }
+    .queue-list { display: grid; gap: 8px; margin-top: 12px; }
+    .queue-pill { display: flex; justify-content: space-between; gap: 10px; align-items: center; border: 1px solid var(--line); border-radius: 16px; padding: 10px 12px; background: rgba(255,255,255,.035); color: var(--soft); font-weight: 850; }
+    .queue-pill span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    @media (max-width: 860px) { .yt-layout { grid-template-columns: 1fr; } .format-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .result-actions { grid-template-columns: 1fr; } }
+    @media (max-width: 520px) { .inline-tools { grid-template-columns: repeat(3, minmax(0, 1fr)); } .music-tools .wide-tool { grid-column: 1 / -1; } .mode-row { width: 100%; margin: 18px 0 14px; } .format-grid { grid-template-columns: 1fr 1fr; gap: 8px; } .format-card { min-height: 112px; padding: 12px; border-radius: 20px; } .format-title { font-size: 1.35rem; } .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .top-badges { display: none; } .hero-title { font-size: 3rem; } }
+</style>
+</head>
+<body class="low-fx">
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4 4 12l6 8"></path><path d="M14 4v16"></path><path d="m14 12 6-8v16l-6-8Z"></path></svg>
+        </div>
+        <div>
+          <h1 class="brand-title">6767</h1>
+          <p class="brand-sub">YouTube Studio Downloader</p>
+        </div>
+      </div>
+      <div class="top-badges">
+        <span class="badge">Video • Musik • Thumbnail</span>
+        <span class="badge" id="providerBadge">API Ready</span>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-card">
+        <span class="hero-kicker">Creator Utility</span>
+        <h2 class="hero-title">YT <span>TOOLS</span></h2>
+        <p class="hero-desc">Tempel link YouTube, ambil video, ambil musik, simpan thumbnail, cek metadata publik yang tersedia, lalu download format yang memang punya link. Tombol ini sekarang tidak pura-pura sakti saat resolusi kosong.</p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" data-switch-tab="video" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg>
+            Mulai Video
+          </button>
+          <button class="btn" data-switch-tab="music" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+            Mode Musik
+          </button>
+        </div>
+      </div>
+
+      <aside class="hero-card mini-dashboard" aria-label="Ringkasan">
+        <h3 class="mini-title"><span class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h7v7H4z"></path><path d="M13 4h7v7h-7z"></path><path d="M4 13h7v7H4z"></path><path d="M13 13h7v7h-7z"></path></svg></span> Ringkasan</h3>
+        <div class="mini-stats">
+          <div class="mini-stat"><strong id="statProcessed">0</strong><span>Diproses</span></div>
+          <div class="mini-stat"><strong id="statDownloads">0</strong><span>Download</span></div>
+          <div class="mini-stat"><strong id="statLastType">-</strong><span>Last Type</span></div>
+          <div class="mini-stat"><strong id="statHistory">0</strong><span>History</span></div>
+        </div>
+        <div class="tips-card">Update ini lebih ringan: efek blur dikurangi, format tanpa link diberi status jelas, thumbnail punya tombol sendiri, dan halaman promosi tetap dipisah. Dunia belum sembuh, tapi UI-nya sudah lebih masuk akal.</div>
+      </aside>
+    </section>
+
+    <nav class="tabs" id="mainTabs" aria-label="Mode tools">
+      <span class="tab-pill" id="tabPill" aria-hidden="true"></span>
+      <button class="tab-btn active" data-tab="video" type="button">Video</button>
+      <button class="tab-btn" data-tab="music" type="button">Musik</button>
+      <button class="tab-btn" data-tab="promo" type="button">Promosi</button>
+      <button class="tab-btn" data-tab="history" type="button">History</button>
+    </nav>
+
+    <main>
+      <section class="tab-panel" id="tab-video">
+        <div class="yt-layout">
+          <div class="panel">
+            <div class="section-head">
+              <div>
+                <h2 class="section-title"><span class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 10l4.55-2.28A1 1 0 0 1 21 8.62v6.76a1 1 0 0 1-1.45.9L15 14"></path><rect x="3" y="6" width="12" height="12" rx="2"></rect></svg></span> Video Downloader</h2>
+                <p class="section-desc">Khusus video YouTube + thumbnail. Pilih resolusi yang statusnya Link siap.</p>
+              </div>
+            </div>
+
+            <div class="input-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l2.12-2.12a5 5 0 0 0-7.07-7.07L11 4.93"></path><path d="M14 11a5 5 0 0 0-7.07 0L4.81 13.12a5 5 0 0 0 7.07 7.07L13 19.07"></path></svg>
+              <input id="videoUrlInput" type="text" placeholder="Tempel link YouTube di sini..." autocomplete="off" inputmode="url" />
+            </div>
+
+            <div class="inline-tools">
+              <button id="pasteVideoBtn" class="btn btn-ghost" type="button">Paste</button>
+              <button id="cleanVideoBtn" class="btn btn-ghost" type="button">Clean URL</button>
+              <button id="clearVideoBtn" class="btn btn-ghost" type="button">Clear</button>
+            </div>
+
+            <div class="mode-row" aria-label="Pilihan video">
+              <button class="seg-btn active" data-video-mode="video" type="button">Video MP4</button>
+              <button class="seg-btn" data-video-mode="thumbnail" type="button">Thumbnail</button>
+            </div>
+
+            <button id="processVideoBtn" class="btn btn-primary btn-full" type="button">
+              <svg id="processVideoIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h8l-1 8 10-12h-8l1-8Z"></path></svg>
+              <span id="processVideoText">Proses Video</span>
+            </button>
+
+            <div class="yt-help">Catatan: kalau 1080P/720P muncul tapi “Link belum ada”, artinya provider cuma ngasih metadata, bukan direct download. Biasanya resolusi tinggi YouTube butuh gabung audio + video di server. Frontend doang tidak bisa jadi tukang las file, sayangnya.</div>
+
+          </div>
+
+          <div id="videoResultBox" class="panel hidden"></div>
+        </div>
+      </section>
+
+      <section class="tab-panel hidden" id="tab-music">
+        <div class="yt-layout">
+          <div class="panel">
+            <div class="section-head">
+              <div>
+                <h2 class="section-title"><span class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg></span> Music Extractor</h2>
+                <p class="section-desc">Halaman ini khusus musik/audio dari link YouTube. Jadi Profile versi lama sekarang pensiun, tepuk tangan pelan.</p>
+              </div>
+            </div>
+
+            <div class="input-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l2.12-2.12a5 5 0 0 0-7.07-7.07L11 4.93"></path><path d="M14 11a5 5 0 0 0-7.07 0L4.81 13.12a5 5 0 0 0 7.07 7.07L13 19.07"></path></svg>
+              <input id="musicUrlInput" type="text" placeholder="Tempel link YouTube untuk ambil musik..." autocomplete="off" inputmode="url" />
+            </div>
+
+            <div class="inline-tools music-tools">
+              <button id="musicFromVideoBtn" class="btn btn-ghost wide-tool" type="button">Ambil dari Video</button>
+              <button id="pasteMusicBtn" class="btn btn-ghost" type="button">Paste</button>
+              <button id="cleanMusicBtn" class="btn btn-ghost" type="button">Clean URL</button>
+              <button id="clearMusicBtn" class="btn btn-ghost" type="button">Clear</button>
+            </div>
+
+            <button id="processMusicBtn" class="btn btn-primary btn-full" type="button">
+              <svg id="processMusicIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3-3"></path></svg>
+              <span id="processMusicText">Proses Musik</span>
+            </button>
+            <p class="compact-note">Kalau API cuma menyediakan video tanpa audio terpisah, halaman ini bakal bilang jujur. Tidak seperti manusia marketing.</p>
+          </div>
+
+          <div id="musicResultBox" class="panel hidden"></div>
+        </div>
+      </section>
+
+      <section class="tab-panel hidden" id="tab-promo">
+        <div class="panel">
+          <div class="section-head">
+            <div>
+              <h2 class="section-title"><span class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-2-2h-3.4a2 2 0 0 1-1.42-.59l-1.59-1.59a2 2 0 0 0-2.83 0L8.17 5.41A2 2 0 0 1 6.76 6H5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2Z"></path><path d="m9 14 2 2 4-5"></path></svg></span> Promosi</h2>
+              <p class="section-desc">Tetap dipisah seperti scrapper TikTok biar rapi, bukan disumpal di bawah downloader kayak laci penuh kabel.</p>
+            </div>
+          </div>
+          <div class="promo-grid">
+            <a class="promo-card website featured" href="https://datzon.my.id" target="_blank" rel="noopener noreferrer">
+              <span class="promo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 7v10l8 4 8-4V7l-8-4Z"></path><path d="M4 7l8 4 8-4"></path><path d="M12 11v10"></path><path d="M8 5l8 4"></path><path d="M16 5 8 9"></path><path d="M7.5 15.5 12 18l4.5-2.5"></path></svg></span>
+              <span><strong class="promo-title">Website Landing Page DATZON</strong><span class="promo-desc">Cek landing page utama, project, store, dan pintu masuk layanan DATZON.</span></span>
+              <span class="promo-open"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M8 7h9v9"></path></svg></span>
+            </a>
+
+            <a class="promo-card whatsapp featured" href="https://whatsapp.com/channel/0029VaLWvFyKWEKjhLtp0H3j" target="_blank" rel="noopener noreferrer">
+              <span class="promo-icon"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.33 4.96L2.05 22l5.26-1.38a9.9 9.9 0 0 0 4.73 1.2h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.51 2 12.04 2Zm5.78 14.17c-.24.69-1.42 1.32-1.96 1.4-.5.08-1.12.11-1.8-.11-.42-.13-.96-.31-1.65-.61-2.91-1.26-4.81-4.18-4.96-4.37-.15-.2-1.18-1.57-1.18-3 0-1.42.75-2.12 1.02-2.41.26-.29.58-.36.78-.36h.56c.18.01.42-.07.66.5.24.58.82 2 .89 2.15.08.15.13.33.03.52-.1.2-.15.32-.3.5-.15.17-.31.38-.44.51-.15.15-.3.31-.13.61.17.29.76 1.25 1.63 2.02 1.12 1 2.06 1.31 2.35 1.46.3.15.47.13.65-.08.17-.19.73-.85.93-1.15.2-.29.4-.25.67-.15.28.1 1.73.81 2.02.96.3.15.5.22.57.34.07.13.07.73-.17 1.42Z"></path></svg></span>
+              <span><strong class="promo-title">WA DATZON</strong><span class="promo-desc">Join saluran aplikasi MOD, update store, dan info terbaru DATZON.</span></span>
+              <span class="promo-open"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M8 7h9v9"></path></svg></span>
+            </a>
+
+            <a class="promo-card whatsapp" href="https://whatsapp.com/channel/0029VbBGRHB2phHSTGzF7v2C" target="_blank" rel="noopener noreferrer">
+              <span class="promo-icon"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.33 4.96L2.05 22l5.26-1.38a9.9 9.9 0 0 0 4.73 1.2h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.51 2 12.04 2Zm5.78 14.17c-.24.69-1.42 1.32-1.96 1.4-.5.08-1.12.11-1.8-.11-.42-.13-.96-.31-1.65-.61-2.91-1.26-4.81-4.18-4.96-4.37-.15-.2-1.18-1.57-1.18-3 0-1.42.75-2.12 1.02-2.41.26-.29.58-.36.78-.36h.56c.18.01.42-.07.66.5.24.58.82 2 .89 2.15.08.15.13.33.03.52-.1.2-.15.32-.3.5-.15.17-.31.38-.44.51-.15.15-.3.31-.13.61.17.29.76 1.25 1.63 2.02 1.12 1 2.06 1.31 2.35 1.46.3.15.47.13.65-.08.17-.19.73-.85.93-1.15.2-.29.4-.25.67-.15.28.1 1.73.81 2.02.96.3.15.5.22.57.34.07.13.07.73-.17 1.42Z"></path></svg></span>
+              <span><strong class="promo-title">WA DANZSHIKII</strong><span class="promo-desc">Channel preset Alight Motion dan bahan edit, buat yang nggak mau mulai dari nol terus nangis.</span></span>
+              <span class="promo-open"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M8 7h9v9"></path></svg></span>
+            </a>
+
+            <a class="promo-card tiktok" href="https://www.tiktok.com/@datzonn?_r=1&_t=ZS-96GmThHXh5z" target="_blank" rel="noopener noreferrer">
+              <span class="promo-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.7 3c.4 2.7 2 4.3 4.3 4.5v3.2c-1.7.1-3.2-.4-4.4-1.3v5.9c0 3.2-2 5.7-5.5 5.7-3.1 0-5.1-2.1-5.1-4.8 0-3.2 2.5-5.1 5.7-4.7v3.3c-1.4-.4-2.5.2-2.5 1.3 0 .9.7 1.6 1.8 1.6 1.2 0 2-.8 2-2.3V3h3.7Z"></path></svg></span>
+              <span><strong class="promo-title">TikTok Datzon</strong><span class="promo-desc">Follow dan support konten DATZON.</span></span>
+              <span class="promo-open"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M8 7h9v9"></path></svg></span>
+            </a>
+
+            <a class="promo-card tiktok" href="https://www.tiktok.com/@danzshiiki?_r=1&_t=ZS-96GmV4G7fku" target="_blank" rel="noopener noreferrer">
+              <span class="promo-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.7 3c.4 2.7 2 4.3 4.3 4.5v3.2c-1.7.1-3.2-.4-4.4-1.3v5.9c0 3.2-2 5.7-5.5 5.7-3.1 0-5.1-2.1-5.1-4.8 0-3.2 2.5-5.1 5.7-4.7v3.3c-1.4-.4-2.5.2-2.5 1.3 0 .9.7 1.6 1.8 1.6 1.2 0 2-.8 2-2.3V3h3.7Z"></path></svg></span>
+              <span><strong class="promo-title">TikTok Danzshikii</strong><span class="promo-desc">Follow akun kreator dan support update random yang masih waras.</span></span>
+              <span class="promo-open"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M8 7h9v9"></path></svg></span>
+            </a>
+
+            <a class="promo-card store" href="https://wa.link/0s10b2" target="_blank" rel="noopener noreferrer">
+              <span class="promo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v16"></path><path d="M17 4v16"></path><path d="M3 8h18"></path><path d="M3 16h18"></path><rect x="3" y="4" width="18" height="16" rx="2"></rect></svg></span>
+              <span><strong class="promo-title">Alight Motion 1.5K</strong><span class="promo-desc">Order premium Alight Motion.</span></span>
+              <span class="promo-open"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M8 7h9v9"></path></svg></span>
+            </a>
+
+            <a class="promo-card mod" href="https://wa.link/czzwuf" target="_blank" rel="noopener noreferrer">
+              <span class="promo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v4"></path><path d="M3 5h4"></path><path d="M6 17v4"></path><path d="M4 19h4"></path><path d="m13 3 2.3 6.7L22 12l-6.7 2.3L13 21l-2.3-6.7L4 12l6.7-2.3L13 3Z"></path></svg></span>
+              <span><strong class="promo-title">Wink Premium 4K</strong><span class="promo-desc">Order premium Wink untuk kebutuhan edit.</span></span>
+              <span class="promo-open"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M8 7h9v9"></path></svg></span>
+            </a>
+
+            <a class="promo-card store featured" href="https://datzon.vercel.app/#store" target="_blank" rel="noopener noreferrer">
+              <span class="promo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h2l.5 3"></path><path d="M7 13h10l4-7H5.5"></path><path d="M7 13 5.5 6"></path><path d="M7 13l-2 2h13"></path><circle cx="9" cy="20" r="1"></circle><circle cx="17" cy="20" r="1"></circle></svg></span>
+              <span><strong class="promo-title">Produk Lainnya</strong><span class="promo-desc">Kunjungi store DATZON untuk akun premium, aplikasi, dan item lain yang kami jual.</span></span>
+              <span class="promo-open"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M8 7h9v9"></path></svg></span>
+            </a>
+          </div>
+
+          <div class="promo-note">Bagian ini sengaja dipisah jadi halaman Promosi, bukan ditempel panjang di bawah hasil scraper. Lebih rapi, lebih gampang diklik, dan tidak bikin tampilan bawah berubah jadi pasar malam CSS.</div>
+        </div>
+      </section>
+
+      <section class="tab-panel hidden" id="tab-history">
+        <div class="panel">
+          <div class="section-head">
+            <div>
+              <h2 class="section-title"><span class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v7h7"></path><path d="M3.05 13a9 9 0 1 0 2.64-7.36L3 10"></path></svg></span> Local History</h2>
+              <p class="section-desc">Riwayat tersimpan di browser perangkat ini.</p>
+            </div>
+            <div class="history-actions">
+              <button id="exportHistoryBtn" class="btn btn-green" type="button">Export</button>
+              <button id="clearHistoryBtn" class="btn btn-danger" type="button">Hapus</button>
+            </div>
+          </div>
+          <div id="historyList" class="history-list"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer-note">6767 STUDIO DOWNLOADER • frontend utility • gunakan untuk konten sendiri / berizin</footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
